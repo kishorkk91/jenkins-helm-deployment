@@ -1,0 +1,87 @@
+USER-SUPPLIED VALUES:
+clusterZone: cluster.local
+controller:
+  JCasC:
+    authorizationStrategy: |-
+      loggedInUsersCanDoAnything:
+        allowAnonymousRead: true
+    enabled: true
+  additionalPlugins:
+  - docker-workflow:latest
+  componentName: jenkins-controller
+  customJenkinsLabels:
+  - jenkins-controller
+  executorMode: EXCLUSIVE
+  image: docker.artifactory.devops.mycompany.com/jenkins
+  tag: 2.319.2-jdk11
+  imagePullPolicy: Always
+  imagePullSecretName: artifactory-docker-regcred
+  initContainerEnv:
+  - name: JENKINS_UC
+    value: https://updates-jenkins-io.artifactory.devops.mycompany.com/update-center.json
+  - name: JENKINS_PLUGIN_INFO
+    value: https://updates-jenkins-io.artifactory.devops.mycompany.com/plugin-versions.json
+  initScripts:
+  - import javaposse.jobdsl.plugin.GlobalJobDslSecurityConfiguration; import jenkins.model.GlobalConfiguration;
+    GlobalConfiguration.all().get(GlobalJobDslSecurityConfiguration.class).useScriptSecurity=false;
+    GlobalConfiguration.all().get(GlobalJobDslSecurityConfiguration.class).save();
+  #initializeOnce: true
+  overwritePlugins: true
+  installPlugins:
+  - antisamy-markup-formatter:latest
+  - artifactory:3.10.6
+  #- artifactory:3.11.0
+  #- build-failure-analyzer:latest
+  - favorite:2.3.3
+  - authorize-project:latest
+  - bitbucket:latest
+  - blueocean:latest
+  - blueocean-bitbucket-pipeline:latest
+  - configuration-as-code:latest
+  - configuration-as-code-groovy:latest
+  - credentials-binding:latest
+  - cucumber-reports:latest
+  - docker-build-step:latest
+  - email-ext:latest
+  - git:latest
+  - job-dsl:latest
+  - kubernetes:latest
+  - kubernetes-credentials-provider:latest
+  - kubernetes-pipeline-devops-steps:latest
+  - kubernetes-cd:latest
+  - matrix-auth:latest
+  - metrics:latest
+  - multiple-scms:latest
+  - pipeline-config-history:latest
+  - prometheus:latest
+  - role-strategy:latest
+  - sonar:latest
+  - ssh-agent:latest
+  - stashNotifier:latest
+  - timestamper:latest
+  - workflow-aggregator:latest
+  - workflow-job:latest
+  javaOpts: -Dhudson.model.DownloadService.noSignatureCheck=true
+  jenkinsUriPrefix: /jenkins
+  numExecutors: 1
+  serviceType: ClusterIP
+  sidecars:
+    configAutoReload:
+      enabled: false
+      folder: https://bitbucket.ebs.mycompany.net:8443/projects/CLXOPS/repos/k8s-cluster-jenkins-projects/raw/projects/demo-build/jcasc_config.yaml
+  #tag: lts-jdk11
+k8smanagement:
+  rbac:
+    additionalNamespaces: {}
+persistence:
+  accessMode: ReadWriteOnce
+  enabled: true
+  existingClaim: jenkins
+  size: 8Gi
+  storageClass: nfs-client
+
+rbac:
+  create: true
+  readSecrets: true
+serviceAccountAgent:
+  create: true

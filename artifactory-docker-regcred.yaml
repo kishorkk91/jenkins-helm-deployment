@@ -1,0 +1,7 @@
+apiVersion: v1
+data:
+  .dockerconfigjson: ZWNvl5aVRoYWaENvdGFpMGoZl5aFlNmZvN0tpZXdpTmFlcjJpeREpVE9PSJ9fX0=
+kind: Secret
+metadata:
+  name: artifactory-docker-regcred
+type: kubernetes.io/dockerconfigjson
